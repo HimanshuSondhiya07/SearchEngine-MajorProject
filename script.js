@@ -171,33 +171,28 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    async function searchWikipedia(query) {
-        const url = `https://wikipedia-api1.p.rapidapi.com/search?q=${encodeURIComponent(query)}&lang=en`;
-        const options = {
-            method: 'GET',
-            headers: {
-                'X-RapidAPI-Key': 'acf7360db2mshd6af464ba7a95f2p157a14jsn5b5224300c9c',
-                'X-RapidAPI-Host': 'wikipedia-api1.p.rapidapi.com'
-            }
-        };
+    async function fetchWikipediaResults(query) {
+        const apiEndpoint = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${query}&format=json&origin=*`;
+        const response = await fetch(apiEndpoint);
+        const data = await response.json();
+        return data.query.search.map(result => ({
+            title: result.title,
+            link: `https://en.wikipedia.org/wiki/${result.title.replace(/ /g, '_')}`,
+            snippet: stripHtmlTags(result.snippet), // Modify to strip HTML tags
+        }));
+    }
 
+    function stripHtmlTags(html) {
+        return html.replace(/<[^>]*>?/gm, ''); // Use regex to remove HTML tags
+    }
+
+    async function searchWikipedia(query) {
         try {
-            const response = await fetch(url, options);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch search results from ${url}`);
-            }
-            const data = await response.json();
-            if (!data || !data.data || data.data.length === 0) {
-                throw new Error('No results found.');
-            }
-            const results = data.data.map(item => ({
-                title: item.title,
-                snippet: item.snippet,
-                url: item.url // Add URL to the results
-            }));
+            const results = await fetchWikipediaResults(query);
             displayWikipediaResults(results);
         } catch (error) {
             alert(`Error: ${error.message}`);
         }
     }
+
 });

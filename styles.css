@@ -168,27 +168,42 @@ ul {
     animation: tilt 5s linear infinite;
 }
 
-.input:checked + .slider {
+.input:checked+.slider {
     background-color: #183153;
 }
 
-.input:focus + .slider {
+.input:focus+.slider {
     box-shadow: 0 0 1px #183153;
 }
 
-.input:checked + .slider:before {
+.input:checked+.slider:before {
     transform: translateX(30px);
 }
 
 @keyframes rotate {
-    0% { transform: rotate(0); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 @keyframes tilt {
-    0%, 100% { transform: rotate(0deg); }
-    25% { transform: rotate(-10deg); }
-    75% { transform: rotate(10deg); }
+
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(-10deg);
+    }
+
+    75% {
+        transform: rotate(10deg);
+    }
 }
 
 /* Main Body */
@@ -280,22 +295,22 @@ ul {
 }
 
 .example-2 .icon-content a[data-social="linkedin"] .filled,
-.example-2 .icon-content a[data-social="linkedin"] ~ .tooltip {
+.example-2 .icon-content a[data-social="linkedin"]~.tooltip {
     background-color: #0274b3;
 }
 
 .example-2 .icon-content a[data-social="github"] .filled,
-.example-2 .icon-content a[data-social="github"] ~ .tooltip {
+.example-2 .icon-content a[data-social="github"]~.tooltip {
     background-color: #24262a;
 }
 
 .example-2 .icon-content a[data-social="instagram"] .filled,
-.example-2 .icon-content a[data-social="instagram"] ~ .tooltip {
+.example-2 .icon-content a[data-social="instagram"]~.tooltip {
     background: linear-gradient(45deg, #405de6, #5b51db, #b33ab4, #c135b4, #e1306c, #fd1f1f);
 }
 
 .example-2 .icon-content a[data-social="youtube"] .filled,
-.example-2 .icon-content a[data-social="youtube"] ~ .tooltip {
+.example-2 .icon-content a[data-social="youtube"]~.tooltip {
     background-color: #ff0000;
 }
 
@@ -380,9 +395,17 @@ ul {
 }
 
 @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
 /* Footer */
