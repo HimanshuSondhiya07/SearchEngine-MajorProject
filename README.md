@@ -20,8 +20,8 @@ ExploreX-SE is a search engine web application that allows users to search for i
 
 ## Installation
 
-1. Clone the repository: `git clone https://github.com/your-username/ExploreX-SE.git`
-2. Navigate to the project directory: `cd ExploreX-SE`
+1. Clone the repository: `git clone https://github.com/HimanshuSondhiya07/SearchEngine-MajorProject.git`
+2. Navigate to the project directory.
 3. Open the `index.html` file in your web browser to access the application.
 
 ## Dependencies
