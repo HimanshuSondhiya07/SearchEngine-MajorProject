@@ -5,9 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const voiceSearchBtn = document.getElementById('voiceSearchBtn');
     const searchInput = document.getElementById('searchInput');
     const searchBtn = document.getElementById("searchBtn");
-    const searchResults = document.getElementById("searchResults");
     const switchInput = document.querySelector('.input');
-    
 
     // Event listener for search button click
     searchBtn.addEventListener("click", function () {
@@ -21,42 +19,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 searchWikipedia(query);
             }
         } else {
-            displayError("Please enter a search query.");
+            alert("Please enter a search query.");
         }
     });
 
     // Event listener for voice search button click
-    voiceSearchBtn.addEventListener('click', () => {
-        // Initialize SpeechRecognition object
-        const recognition = new webkitSpeechRecognition(); // for Webkit browsers
-        // Set properties for speech recognition
-        recognition.lang = 'en-US'; // Language for speech recognition
-        recognition.interimResults = false; // Disable interim results
-
-        // Start speech recognition
-        recognition.start();
-
-        // Event listener for when speech is recognized
-        recognition.onresult = function (event) {
-            // Get recognized speech result
-            const speechResult = event.results[0][0].transcript;
-            // Populate search input field with recognized speech
-            searchInput.value = speechResult;
-        };
-
-        // Event listener for speech recognition errors
-        recognition.onerror = function (event) {
-            console.error('Speech recognition error:', event.error);
-        };
-    });
+    voiceSearchBtn.addEventListener('click', startSpeechRecognition);
 
     // Event listener for switch toggle
     switchInput.addEventListener('change', function () {
         if (this.checked) {
-            // Dark mode
             enableDarkMode();
         } else {
-            // Light mode
             enableLightMode();
         }
     });
@@ -64,18 +38,35 @@ document.addEventListener("DOMContentLoaded", function () {
     // Function to enable dark mode
     function enableDarkMode() {
         document.body.classList.add('dark-mode');
-        moonIcon.style.display = 'none';
-        sunIcon.style.display = 'block';
     }
 
     // Function to enable light mode
     function enableLightMode() {
         document.body.classList.remove('dark-mode');
-        moonIcon.style.display = 'block';
-        sunIcon.style.display = 'none';
     }
 
-    // Function to set active tab
+    // Function to start speech recognition
+    function startSpeechRecognition() {
+        const recognition = new webkitSpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+
+        recognition.start();
+
+        recognition.onresult = function (event) {
+            const speechResult = event.results[0][0].transcript;
+            searchInput.value = speechResult;
+        };
+
+        recognition.onerror = function (event) {
+            console.error('Speech recognition error:', event.error);
+        };
+
+        setTimeout(() => {
+            recognition.stop();
+        }, 10000);
+    }
+
     function setActiveTab(tab) {
         const tabs = [googleTab, geminiTab, wikipediaTab];
         tabs.forEach(t => t.classList.remove("active"));
@@ -94,124 +85,22 @@ document.addEventListener("DOMContentLoaded", function () {
         setActiveTab(wikipediaTab);
     });
 
-    // Function to start speech recognition
-function startSpeechRecognition() {
-    // Initialize SpeechRecognition object
-    const recognition = new webkitSpeechRecognition(); // for Webkit browsers
-    // Set properties for speech recognition
-    recognition.lang = 'en-US'; // Language for speech recognition
-    recognition.interimResults = false; // Disable interim results
-
-    // Start speech recognition
-    recognition.start();
-
-    // Event listener for when speech is recognized
-    recognition.onresult = function(event) {
-        // Get recognized speech result
-        const speechResult = event.results[0][0].transcript;
-        // Populate search input field with recognized speech
-        searchInput.value = speechResult;
-    };
-
-    // Event listener for speech recognition errors
-    recognition.onerror = function(event) {
-        console.error('Speech recognition error:', event.error);
-    };
-
-    // Stop speech recognition after 10 seconds (adjust duration as needed)
-    setTimeout(() => {
-        recognition.stop();
-    }, 10000); // 10000 milliseconds = 10 seconds
-}
-
-// Add event listener to voice search button
-voiceSearchBtn.addEventListener('click', startSpeechRecognition);
-
-    function setActiveTab(tab) {
-        const tabs = [googleTab, geminiTab, wikipediaTab];
-        tabs.forEach(t => t.classList.remove("active"));
-        tab.classList.add("active");
-    }
-
     // Function to display Google search results
     function displayGoogleResults(results) {
-        searchResults.innerHTML = ""; // Clear loading indicator
-        if (results && results.length > 0) {
-            results.forEach(result => {
-                const resultDiv = document.createElement("div");
-                resultDiv.classList.add("searchResult");
-
-                // Display title, snippet, and URL
-                const title = document.createElement("h2");
-                title.textContent = result.title;
-                const snippet = document.createElement("p");
-                snippet.textContent = result.snippet;
-                const url = document.createElement("a");
-                url.textContent = result.url;
-                url.href = result.url;
-                url.target = "_blank"; // Open link in a new tab
-                resultDiv.appendChild(title);
-                resultDiv.appendChild(snippet);
-                resultDiv.appendChild(url);
-
-                searchResults.appendChild(resultDiv);
-            });
-            searchResults.scrollIntoView({ behavior: 'smooth' }); // Smooth scrolling to results
-        } else {
-            displayError("No results found.");
-        }
+        localStorage.setItem("searchResults", JSON.stringify(results));
+        window.location.href = "results.html";
     }
 
     // Function to display Gemini search results
     function displayGeminiResults(results) {
-        searchResults.innerHTML = ""; // Clear loading indicator
-        if (results && results.length > 0) {
-            results.forEach(result => {
-                const resultDiv = document.createElement("div");
-                resultDiv.classList.add("searchResult");
-
-                // Check if the result contains image (optional)
-                if (result.image) {
-                    const image = document.createElement("img");
-                    image.src = result.image;
-                    resultDiv.appendChild(image);
-                }
-
-                // Display text
-                const text = document.createElement("p");
-                text.textContent = result.text;
-                resultDiv.appendChild(text);
-
-                searchResults.appendChild(resultDiv);
-            });
-            searchResults.scrollIntoView({ behavior: 'smooth' }); // Smooth scrolling to results
-        } else {
-            displayError("No results found.");
-        }
+        localStorage.setItem("searchResults", JSON.stringify(results));
+        window.location.href = "results.html";
     }
 
     // Function to display Wikipedia search results
     function displayWikipediaResults(results) {
-        searchResults.innerHTML = ""; // Clear loading indicator
-        if (results && results.length > 0) {
-            results.forEach(result => {
-                const resultDiv = document.createElement("div");
-                resultDiv.classList.add("searchResult");
-
-                // Display title and snippet
-                const title = document.createElement("h2");
-                title.textContent = result.title;
-                const snippet = document.createElement("p");
-                snippet.textContent = result.snippet;
-                resultDiv.appendChild(title);
-                resultDiv.appendChild(snippet);
-
-                searchResults.appendChild(resultDiv);
-            });
-            searchResults.scrollIntoView({ behavior: 'smooth' }); // Smooth scrolling to results
-        } else {
-            displayError("No results found.");
-        }
+        localStorage.setItem("searchResults", JSON.stringify(results));
+        window.location.href = "results.html";
     }
 
     async function searchGoogle(query) {
@@ -235,7 +124,7 @@ voiceSearchBtn.addEventListener('click', startSpeechRecognition);
             }
             displayGoogleResults(data.results);
         } catch (error) {
-            displayError(`Error: ${error.message}`);
+            alert(`Error: ${error.message}`);
         }
     }
 
@@ -248,7 +137,7 @@ voiceSearchBtn.addEventListener('click', startSpeechRecognition);
                 'X-RapidAPI-Key': 'acf7360db2mshd6af464ba7a95f2p157a14jsn5b5224300c9c',
                 'X-RapidAPI-Host': 'gemini-pro-vision-ai1.p.rapidapi.com'
             },
-            body: {
+            body: JSON.stringify({
                 contents: [
                     {
                         parts: [
@@ -264,7 +153,7 @@ voiceSearchBtn.addEventListener('click', startSpeechRecognition);
                         ]
                     }
                 ]
-            }
+            })
         };
 
         try {
@@ -278,7 +167,7 @@ voiceSearchBtn.addEventListener('click', startSpeechRecognition);
             }
             displayGeminiResults(data.contents);
         } catch (error) {
-            displayError(`Error: ${error.message}`);
+            alert(`Error: ${error.message}`);
         }
     }
 
@@ -303,15 +192,12 @@ voiceSearchBtn.addEventListener('click', startSpeechRecognition);
             }
             const results = data.data.map(item => ({
                 title: item.title,
-                snippet: item.snippet
+                snippet: item.snippet,
+                url: item.url // Add URL to the results
             }));
             displayWikipediaResults(results);
         } catch (error) {
-            displayError(`Error: ${error.message}`);
+            alert(`Error: ${error.message}`);
         }
-    }
-
-    function displayError(message) {
-        searchResults.innerHTML = `<p>${message}</p>`;
     }
 });
